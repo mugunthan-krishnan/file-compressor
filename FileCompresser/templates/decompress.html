@@ -1,0 +1,24 @@
+{% extends "layout.html" %}
+{% block title %}Decompress File{% endblock %}
+
+{% block content %}
+{% include 'nav.html' %}
+<div class="container-fluid" style="background-color: rgb(245, 236, 110); height:90vh;">
+    <div>
+        <form method="POST" enctype="multipart/form-data">
+            <div class="form-group mb-3">
+                <label class="form-label" for="fileinput">Upload File</label>
+                <input class="form-control" id="fileinput" name="file" type="file" />
+            </div>
+            <input type="submit" class="btn btn-primary" name="decompress" value="Decompress" />
+        </form>
+    </div>
+    {% if enabledwnld %}
+    <div class="d-flex justify-content-center">
+        <form method="POST">
+            <input class="btn btn-primary" name="download" type="submit" value="Download File">
+        </form>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

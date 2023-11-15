@@ -1,0 +1,50 @@
+{% extends "layout.html" %}
+{% block title %}Compress File{% endblock %}
+{% block content %}
+{% include 'nav.html' %}
+<div class="container-fluid" style="background-color: rgb(245, 236, 110); height:90vh;">
+    <div>
+        <form method="POST" enctype="multipart/form-data">
+            <div class="form-group mb-3">
+                <label class="form-label" for="fileinput">Upload File</label>
+                <input class="form-control" id="fileinput" name="file" type="file" />
+            </div>
+            <input type="submit" name="upload" class="btn btn-primary" value="Upload"/>
+        </form>
+    </div>
+    <br>
+    <div class="d-flex justify-content-left">
+        {% for f in range(0,filenames|length) %}
+            {% if f == 0 %}
+                <p>Files to be compressed: </p>
+            {% endif %}
+            {% if f != (filenames|length)-1 %}
+                <p>{{filenames[f]}},</p>
+            {% else %}
+            <p>{{filenames[f]}}</p>
+            {% endif %}
+        {% endfor %}
+    </div>
+    <div class="d-flex justify-content-center">
+        <form method="POST">
+            {% if filenames|length > 0 %}
+                <input type="submit" class="btn btn-primary" name="compress" value="Compress"/>
+            {% endif %}
+        </form>
+    </div>
+    {% if enabledwnld %}
+    <br>
+    <div class="d-flex justify-content-center">
+        <form method="POST">
+            <input class="btn btn-primary" name="download" type="submit" value="Download File">
+        </form>
+    </div>
+    <br>
+    <div class="d-flex justify-content-center">
+        <form method="POST">
+            <input class="btn btn-primary" name="downloadlogfile" type="submit" value="Download Log File">
+        </form>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
