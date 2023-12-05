@@ -79,7 +79,7 @@ def compressPage():
             return send_file(zipfilePath, as_attachment=True, download_name='compressed.zip')
         # Download the log file as a txt file when download log file button is clicked.
         if request.form.get('downloadlogfile'):
-            return send_file('/tmp/logfile.txt', as_attachment=True, download_name='logfile.txt')
+            return send_file('/tmp/logfile.xlsx', as_attachment=True, download_name='logfile.xlsx')
 
     return render_template('compress.html', enabledwnld=enabledwnld, filenames=filenames)
 
