@@ -1,6 +1,8 @@
 import os
-import sys
-from flask import Flask, render_template
+from flask import Flask
+from dotenv import load_dotenv
+load_dotenv()
+mongoDBURL = os.environ.get('DB_URL')
 
 def create_app(config_filename=''):
     app = Flask(__name__)
@@ -16,4 +18,4 @@ def create_app(config_filename=''):
 
 app = create_app()
 if __name__ == "__main__":
-    app.run(debug=True, host='0.0.0.0', port=int(os.environ.get('PORT', 8080)))
+    app.run(debug=True, host='0.0.0.0', port=int(os.environ.get('PORT', 5003)))

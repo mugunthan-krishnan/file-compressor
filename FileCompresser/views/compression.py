@@ -3,9 +3,8 @@ from flask import Blueprint, render_template, request, send_file
 from zipfile import ZipFile
 import openpyxl
 import lzma
-import certifi
-import gridfs
 import time
+from helpers.preProcessOps import *
 
 compress = Blueprint('compressfile', __name__)
 # Global Variables
@@ -16,19 +15,7 @@ keys = []
 contents=[]
 compressionSpeed = []
 
-def getDatabase():
-    from pymongo import MongoClient
-    connection_string = 'mongodb+srv://mk2246:Vidyakrishaksh1991@cluster0.edgcizs.mongodb.net/?retryWrites=true&w=majority'
-    connection = MongoClient(connection_string, tlsCAFile=certifi.where())
-    database = connection['Cluster0']
-    return database
-
-database = getDatabase()
-fs = gridfs.GridFS(database)
-
-for i in fs.find():
-    print(i._id)
-    fs.delete(i._id)
+fs = preProcessOps()
 
 @compress.route('/compress', methods=['GET','POST'])
 def compressPage():
@@ -92,7 +79,7 @@ def compressPage():
 def createLogFile(filenames, inputFilesSize):
     workbook = openpyxl.Workbook()
     sheet = workbook.active
-    logData = [('FILENAME', 'COMPRESSION RATIO', 'COMPRESSION SPEED')]
+    logData = [('FILENAME', 'COMPRESSION RATIO', 'COMPRESSION SPEED (BYTES/SECOND)')]
     for i in range(len(filenames)):
         original_size = inputFilesSize[filenames[i]]
         compressed_size = os.path.getsize('/tmp'+'/'+filenames[i])
