@@ -11,6 +11,8 @@ import gridfs
 filestreams = []
 filenames = []
 inputFilesSize = {}
+keys = []
+contents=[]
 compressedzipfiles = './FileCompresser/static/compressedzipfiles'
 compressedfiles = './FileCompresser/static/compressedfiles'
 
@@ -18,7 +20,6 @@ def getDatabase():
     from pymongo import MongoClient
     connection_string = 'mongodb+srv://mk2246:Vidyakrishaksh1991@cluster0.edgcizs.mongodb.net/?retryWrites=true&w=majority'
     connection = MongoClient(connection_string, tlsCAFile=certifi.where())
-    #database = connection['cs632101f23_026']
     database = connection['Cluster0']
     return database
 
@@ -52,8 +53,7 @@ def compressPage():
                 filenames.append(input_file.filename)
                 inputFileSize = {input_file.filename:len(data)}
                 inputFilesSize.update(inputFileSize)
-        keys = []
-        contents=[]
+
         # Compress the uploaded files when compress button is clicked.
         if request.form.get("compress"):
             compressor = lzma.LZMACompressor()
@@ -61,7 +61,9 @@ def compressPage():
                 compressed_data = compressor.compress(filestreams[f])
                 key = fs.put(compressed_data, filename=filenames[f])
                 keys.append(key)
+                print(fs.get(key).read())
                 contents.append(fs.get(key).read())
+                print(contents)
             #createLogFile(filenames, inputFilesSize)
             enabledwnld = True
 
@@ -75,10 +77,11 @@ def compressPage():
             enabledwnld = False
             #filenames.clear()
             filestreams.clear()
-            file_path = os.path.join('/tmp', filenames[0])
-            with open(file_path, 'w') as f:
+            file_path = '/tmp/' + filenames[0]
+            print(file_path)
+            with open(file_path, 'wb') as f:
                 f.write(contents[0])
-            return send_file(file_path, as_attachment=True, download_name=f.name)
+            return send_file(file_path, as_attachment=True, download_name=filenames[0])
             # if os.path.isfile(compressedzipfiles+'/compressed.zip'):
             #     downloadFilePath = compressedzipfiles+'/compressed.zip'
             # for f in fs.find({"filename":filenames[0]},no_cursor_timeout=True):
