@@ -33,7 +33,7 @@ def decompressPage():
                 print(fileList)
         #     data = input_file.stream.read()
         #     decompresser = lzma.LZMADecompressor()
-        #     compressed_data = decompresser(data)
+        #     compressed_data = decompresser.decompress(data)
         #     output_file = './static/decompressedfiles/decompressed.txt'
         #     with open(output_file, 'wb') as f:
         #         f.write(compressed_data)
