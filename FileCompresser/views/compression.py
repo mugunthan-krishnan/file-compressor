@@ -67,7 +67,7 @@ def compressPage():
                 with open(file_path, 'wb') as f:
                     f.write(contents[i])
             zipfilePath = '/tmp/compressed.zip'
-            with ZipFile(zipfilePath, 'wb') as zipObj:
+            with ZipFile(zipfilePath, 'w') as zipObj:
                 # Add multiple files to the zip
                 for f in filenames:
                     toBeZippedFileName = '/tmp/' + f
