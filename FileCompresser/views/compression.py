@@ -1,6 +1,7 @@
 import os
 from flask import Blueprint, render_template, request, send_file
 from zipfile import ZipFile
+import openpyxl
 import lzma
 import certifi
 import gridfs
@@ -84,12 +85,16 @@ def compressPage():
 
 # Log File Data
 def createLogFile(filenames, inputFilesSize):
-    logString = 'FILENAME' + '\t\t\t' + 'COMPRESSION RATIO' + '\n'
+    workbook = openpyxl.Workbook()
+    sheet = workbook.active
+    logData = [('FILENAME', 'COMPRESSION RATIO')]
     for f in filenames:
         original_size = inputFilesSize[f]
         compressed_size = os.path.getsize('/tmp'+'/'+f)
-        #compressed_size = 1
         compression_ratio = original_size / compressed_size
-        logString = logString + f + '\t\t\t' + str(compression_ratio) + '\n'
-    with open('/tmp/logfile.txt', 'w') as lf:
-        lf.write(logString)
+        logData.append((f,str(compression_ratio)))
+#    with open('/tmp/logfile.txt', 'w') as lf:
+#        lf.write(logString)
+    for row_data in logData:
+        sheet.append(row_data)
+    workbook.save('/tmp/logfile.xlsx')
