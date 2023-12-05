@@ -54,7 +54,7 @@ def compressPage():
                 key = fs.put(compressed_data, filename=filenames[f])
                 keys.append(key)
                 contents.append(fs.get(key).read())
-            createLogFile(filenames, inputFilesSize)
+            #createLogFile(filenames, inputFilesSize)
             enabledwnld = True
 
         # Download the compressed files as a zip file when download file button is clicked.
