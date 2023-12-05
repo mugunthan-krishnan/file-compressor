@@ -55,17 +55,19 @@ def compressPage():
                 key = fs.put(compressed_data, filename=filenames[f])
                 keys.append(key)
                 contents.append(fs.get(key).read())
-            #createLogFile(filenames, inputFilesSize)
+            
+            # Create the files in the tmp directory in Heroku Ephemeral Filesystem
+            for i in range(len(filenames)):
+                file_path = '/tmp/' + filenames[i]
+                with open(file_path, 'wb') as f:
+                    f.write(contents[i])
+            createLogFile(filenames, inputFilesSize)
             enabledwnld = True
 
         # Download the compressed files as a zip file when download file button is clicked.
         if request.form.get("download"):
             enabledwnld = False
             filestreams.clear()
-            for i in range(len(filenames)):
-                file_path = '/tmp/' + filenames[i]
-                with open(file_path, 'wb') as f:
-                    f.write(contents[i])
             zipfilePath = '/tmp/compressed.zip'
             with ZipFile(zipfilePath, 'w') as zipObj:
                 # Add multiple files to the zip
@@ -85,8 +87,8 @@ def createLogFile(filenames, inputFilesSize):
     logString = 'FILENAME' + '\t\t\t' + 'COMPRESSION RATIO' + '\n'
     for f in filenames:
         original_size = inputFilesSize[f]
-        #compressed_size = os.path.getsize('/tmp'+'/'+f)
-        compressed_size = 1
+        compressed_size = os.path.getsize('/tmp'+'/'+f)
+        #compressed_size = 1
         compression_ratio = original_size / compressed_size
         logString = logString + f + '\t\t\t' + str(compression_ratio) + '\n'
     with open('/tmp/logfile.txt', 'w') as lf:
