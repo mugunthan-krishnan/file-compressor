@@ -1,5 +1,6 @@
 import os
 from flask import Blueprint, render_template, request, send_file
+from zipfile import ZipFile
 import lzma
 import certifi
 import gridfs
@@ -65,8 +66,14 @@ def compressPage():
                 file_path = '/tmp/' + filenames[i]
                 with open(file_path, 'wb') as f:
                     f.write(contents[i])
-                return send_file(file_path, as_attachment=True, download_name=filenames[i])
+            zipfilePath = '/tmp/compressed.zip'
+            with ZipFile(zipfilePath, 'wb') as zipObj:
+                # Add multiple files to the zip
+                for f in filenames:
+                    toBeZippedFileName = '/tmp/' + f
+                    zipObj.write(toBeZippedFileName, os.path.basename(toBeZippedFileName))
             filenames.clear()
+            return send_file(zipfilePath, as_attachment=True, download_name='compressed.zip')
         # Download the log file as a txt file when download log file button is clicked.
         if request.form.get('downloadlogfile'):
             return send_file('/tmp/logfile.txt', as_attachment=True, download_name='logfile.txt')
@@ -78,7 +85,8 @@ def createLogFile(filenames, inputFilesSize):
     logString = 'FILENAME' + '\t\t\t' + 'COMPRESSION RATIO' + '\n'
     for f in filenames:
         original_size = inputFilesSize[f]
-        compressed_size = os.path.getsize('/tmp'+'/'+f)
+        #compressed_size = os.path.getsize('/tmp'+'/'+f)
+        compressed_size = 1
         compression_ratio = original_size / compressed_size
         logString = logString + f + '\t\t\t' + str(compression_ratio) + '\n'
     with open('/tmp/logfile.txt', 'w') as lf:
