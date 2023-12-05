@@ -1,20 +1,16 @@
 import os
-from os.path import basename
 from flask import Blueprint, render_template, request, send_file
-from zipfile import ZipFile
-import shutil
 import lzma
 import certifi
-compress = Blueprint('compressfile', __name__)
 import gridfs
+
+compress = Blueprint('compressfile', __name__)
 # Global Variables
 filestreams = []
 filenames = []
 inputFilesSize = {}
 keys = []
 contents=[]
-compressedzipfiles = './FileCompresser/static/compressedzipfiles'
-compressedfiles = './FileCompresser/static/compressedfiles'
 
 def getDatabase():
     from pymongo import MongoClient
@@ -38,10 +34,6 @@ def compressPage():
         filestreams.clear()
         filenames.clear()
         inputFilesSize.clear()
-        # shutil.rmtree(compressedzipfiles, ignore_errors=True)
-        # os.mkdir(compressedzipfiles)
-        # shutil.rmtree(compressedfiles, ignore_errors=True)
-        # os.mkdir(compressedfiles)
     
     if request.method == "POST":
         # Upload a file and its metadata.
@@ -61,37 +53,23 @@ def compressPage():
                 compressed_data = compressor.compress(filestreams[f])
                 key = fs.put(compressed_data, filename=filenames[f])
                 keys.append(key)
-                print(fs.get(key).read())
                 contents.append(fs.get(key).read())
-                print(contents)
-            #createLogFile(filenames, inputFilesSize)
+            createLogFile(filenames, inputFilesSize)
             enabledwnld = True
 
         # Download the compressed files as a zip file when download file button is clicked.
         if request.form.get("download"):
-            # with ZipFile('compressed.zip', 'w') as zipObj:
-            #     # Add multiple files to the zip
-            #     for f in fs.find(no_cursor_timeout=True):
-            #         toBeZippedFileName = f
-            #         zipObj.write(toBeZippedFileName, basename(toBeZippedFileName))
             enabledwnld = False
-            #filenames.clear()
             filestreams.clear()
-            file_path = '/tmp/' + filenames[0]
-            print(file_path)
-            with open(file_path, 'wb') as f:
-                f.write(contents[0])
-            return send_file(file_path, as_attachment=True, download_name=filenames[0])
-            # if os.path.isfile(compressedzipfiles+'/compressed.zip'):
-            #     downloadFilePath = compressedzipfiles+'/compressed.zip'
-            # for f in fs.find({"filename":filenames[0]},no_cursor_timeout=True):
-            #     downloadFilePath = f.read()
-            #     print(downloadFilePath)
-            #     return send_file(downloadFilePath, as_attachment=True, download_name=f.name)
-
+            for i in range(len(filenames)):
+                file_path = '/tmp/' + filenames[i]
+                with open(file_path, 'wb') as f:
+                    f.write(contents[i])
+                return send_file(file_path, as_attachment=True, download_name=filenames[i])
+            filenames.clear()
         # Download the log file as a txt file when download log file button is clicked.
         if request.form.get('downloadlogfile'):
-            return send_file('./FileCompresser/static/logfile.txt', as_attachment=True, download_name='logfile.txt')
+            return send_file('/tmp/logfile.txt', as_attachment=True, download_name='logfile.txt')
 
     return render_template('compress.html', enabledwnld=enabledwnld, filenames=filenames)
 
@@ -100,8 +78,8 @@ def createLogFile(filenames, inputFilesSize):
     logString = 'FILENAME' + '\t\t\t' + 'COMPRESSION RATIO' + '\n'
     for f in filenames:
         original_size = inputFilesSize[f]
-        compressed_size = os.path.getsize(compressedfiles+'/'+f)
+        compressed_size = os.path.getsize('/tmp'+'/'+f)
         compression_ratio = original_size / compressed_size
         logString = logString + f + '\t\t\t' + str(compression_ratio) + '\n'
-    with open('./static/logfile.txt', 'w') as lf:
+    with open('/tmp/logfile.txt', 'w') as lf:
         lf.write(logString)
