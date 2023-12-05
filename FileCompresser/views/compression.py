@@ -5,6 +5,7 @@ import openpyxl
 import lzma
 import certifi
 import gridfs
+import time
 
 compress = Blueprint('compressfile', __name__)
 # Global Variables
@@ -13,6 +14,7 @@ filenames = []
 inputFilesSize = {}
 keys = []
 contents=[]
+compressionSpeed = []
 
 def getDatabase():
     from pymongo import MongoClient
@@ -52,7 +54,10 @@ def compressPage():
         if request.form.get("compress"):
             compressor = lzma.LZMACompressor()
             for f in range(0, len(filestreams)):
+                start_time = time.time()
                 compressed_data = compressor.compress(filestreams[f])
+                end_time = time.time()
+                compressionSpeed.append(len(compressed_data) / (end_time - start_time))
                 key = fs.put(compressed_data, filename=filenames[f])
                 keys.append(key)
                 contents.append(fs.get(key).read())
@@ -87,14 +92,13 @@ def compressPage():
 def createLogFile(filenames, inputFilesSize):
     workbook = openpyxl.Workbook()
     sheet = workbook.active
-    logData = [('FILENAME', 'COMPRESSION RATIO')]
-    for f in filenames:
-        original_size = inputFilesSize[f]
-        compressed_size = os.path.getsize('/tmp'+'/'+f)
+    logData = [('FILENAME', 'COMPRESSION RATIO', 'COMPRESSION SPEED')]
+    for i in range(len(filenames)):
+        original_size = inputFilesSize[filenames[i]]
+        compressed_size = os.path.getsize('/tmp'+'/'+filenames[i])
         compression_ratio = original_size / compressed_size
-        logData.append((f,str(compression_ratio)))
-#    with open('/tmp/logfile.txt', 'w') as lf:
-#        lf.write(logString)
+        compression_speed = compressionSpeed[i]
+        logData.append((filenames[i],str(compression_ratio),str(compression_speed)))
     for row_data in logData:
         sheet.append(row_data)
     workbook.save('/tmp/logfile.xlsx')
