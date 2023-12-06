@@ -1,9 +1,13 @@
+"""
+    Purpose:    The purpose of this script is to get mongo database connection
+                and clear the grid file system collection of previous files.
+"""
+
 def getDatabase():
     from pymongo import MongoClient
     from main import mongoDBURL
     import certifi
-    connection_string = mongoDBURL
-    connection = MongoClient(connection_string, tlsCAFile=certifi.where())
+    connection = MongoClient(mongoDBURL, tlsCAFile=certifi.where())
     database = connection['Cluster0']
     return database
 

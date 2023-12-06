@@ -1,45 +1,64 @@
-import io
 import os
-from flask import Blueprint, render_template, request, send_file
-import shutil
 import lzma
+import time
+from zipfile import ZipFile
+from helpers.preProcessOps import *
+from flask import Blueprint, render_template, request, send_file
+
 decompress = Blueprint('decompressfile', __name__)
 
 # Global Variables
-decompressedzipfiles = './FileCompresser/static/decompressedzipfiles'
-decompressedfiles = './FileCompresser/static/decompressedfiles'
+filestreams = []
+filenames = []
+keys = []
+contents=[]
+
+# Run pre processing steps for database.
+fs = preProcessOps()
 
 @decompress.route('/decompress', methods=['GET','POST'])
 def decompressPage():
     enabledwnld = False
     if request.method == "GET":
-        shutil.rmtree(decompressedzipfiles)
-        os.mkdir(decompressedzipfiles)
-        shutil.rmtree(decompressedfiles)
-        os.mkdir(decompressedfiles)
+        filestreams.clear()
+        filenames.clear()
     
     if request.method == "POST":
-        if request.form.get("decompress"):
+        # Upload a file and its metadata.
+        if request.form.get("upload"):
             input_file = request.files['file']
-            if input_file.filename.find('.zip'):
-                input_file.save(decompressedzipfiles+'/decompressedzip.zip')
-                shutil.unpack_archive(decompressedzipfiles+'/decompressedzip.zip', decompressedfiles)
+            if input_file.filename and input_file.filename not in filenames:
+                data = input_file.stream.read()
+                filestreams.append(data)
+                filenames.append(input_file.filename)
 
-                for dirName, subdirList, fileList in os.walk(decompressedfiles):
-                    print(dirName)
-                for fname in fileList:
-                    print('\t%s' % fname)
-                
-                print(fileList)
-        #     data = input_file.stream.read()
-        #     decompresser = lzma.LZMADecompressor()
-        #     compressed_data = decompresser.decompress(data)
-        #     output_file = './static/decompressedfiles/decompressed.txt'
-        #     with open(output_file, 'wb') as f:
-        #         f.write(compressed_data)
-        #     enabledwnld = True
-        # if request.form.get("download"):
-        #     if os.path.isfile('./static/decompressedfiles/decompressed.txt'):
-        #         downloadFilePath = './static/decompressedfiles/decompressed.txt'
-        #         return send_file(downloadFilePath, as_attachment=True, download_name='decompressed_file.txt')
-    return render_template('decompress.html', enabledwnld=enabledwnld)
+        # Decompress the uploaded files when decompress button is clicked.
+        if request.form.get("decompress"):
+            decompressor = lzma.LZMADecompressor()
+            for f in range(0, len(filestreams)):
+                decompressed_data = decompressor.decompress(filestreams[f])
+                key = fs.put(decompressed_data, filename=filenames[f])
+                keys.append(key)
+                contents.append(fs.get(key).read())
+            
+            # Create the files in the tmp directory in Heroku Ephemeral Filesystem
+            for i in range(len(filenames)):
+                file_path = '/tmp/' + filenames[i]
+                with open(file_path, 'wb') as f:
+                    f.write(contents[i])
+            enabledwnld = True
+
+        # Download the decompressed files as a zip file when download file button is clicked.
+        if request.form.get("download"):
+            enabledwnld = False
+            zipfilePath = '/tmp/decompressed.zip'
+            with ZipFile(zipfilePath, 'w') as zipObj:
+                # Add multiple files to the zip
+                for f in filenames:
+                    toBeZippedFileName = '/tmp/' + f
+                    zipObj.write(toBeZippedFileName, os.path.basename(toBeZippedFileName))
+            filenames.clear()
+            filestreams.clear()
+            return send_file(zipfilePath, as_attachment=True, download_name='decompressed.zip')
+    
+    return render_template('decompress.html', enabledwnld=enabledwnld, filenames=filenames)

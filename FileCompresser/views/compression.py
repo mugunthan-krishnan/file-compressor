@@ -1,12 +1,13 @@
 import os
-from flask import Blueprint, render_template, request, send_file
-from zipfile import ZipFile
 import openpyxl
 import lzma
 import time
+from zipfile import ZipFile
 from helpers.preProcessOps import *
+from flask import Blueprint, render_template, request, send_file
 
 compress = Blueprint('compressfile', __name__)
+
 # Global Variables
 filestreams = []
 filenames = []
@@ -15,12 +16,13 @@ keys = []
 contents=[]
 compressionSpeed = []
 
+# Run pre processing steps for database.
 fs = preProcessOps()
 
 @compress.route('/compress', methods=['GET','POST'])
 def compressPage():
     enabledwnld = False
-    # Clear filenames, filestreams and associated folders fpr every run.
+    # Clear filenames, filestreams fpr every run.
     if request.method == "GET":
         filestreams.clear()
         filenames.clear()
