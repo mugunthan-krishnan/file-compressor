@@ -1,6 +1,7 @@
 import os
 import openpyxl
 import lzma
+import zlib
 import time
 from zipfile import ZipFile
 from helpers.preProcessOps import *
@@ -41,10 +42,11 @@ def compressPage():
 
         # Compress the uploaded files when compress button is clicked.
         if request.form.get("compress"):
-            compressor = lzma.LZMACompressor()
-            for f in range(0, len(filestreams)):
+            #compressor = lzma.LZMACompressor()
+            for f in range(len(filestreams)):
                 start_time = time.time()
-                compressed_data = compressor.compress(filestreams[f])
+                #compressed_data = compressor.compress(filestreams[f])
+                compressed_data = zlib.compress(filestreams[f])
                 end_time = time.time()
                 compressionSpeed.append(len(compressed_data) / (end_time - start_time))
                 key = fs.put(compressed_data, filename=filenames[f])

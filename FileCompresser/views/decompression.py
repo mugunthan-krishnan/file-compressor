@@ -1,6 +1,6 @@
 import os
 import lzma
-import time
+import zlib
 from zipfile import ZipFile
 from helpers.preProcessOps import *
 from flask import Blueprint, render_template, request, send_file
@@ -34,9 +34,10 @@ def decompressPage():
 
         # Decompress the uploaded files when decompress button is clicked.
         if request.form.get("decompress"):
-            decompressor = lzma.LZMADecompressor()
-            for f in range(0, len(filestreams)):
-                decompressed_data = decompressor.decompress(filestreams[f])
+            #decompressor = lzma.LZMADecompressor()
+            for f in range(len(filestreams)):
+                #decompressed_data = decompressor.decompress(filestreams[f])
+                decompressed_data = zlib.decompress(filestreams[f])
                 key = fs.put(decompressed_data, filename=filenames[f])
                 keys.append(key)
                 contents.append(fs.get(key).read())
