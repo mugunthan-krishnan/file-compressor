@@ -13,7 +13,7 @@
                     <div class="card" style="width: 15rem;">
                         <div class="card-body">
                             <h5 class="card-title mb-2 align-content-center">Compress Files</h5>
-                            <p class="card-text">All file types supported!</p>
+                            <p class="card-text">Check below for file types supported!</p>
                             <div class="text-center"><a href="{{ url_for('compressfile.compressPage') }}" class="btn btn-primary">Compress</a></div>
                         </div>
                     </div>
@@ -22,12 +22,16 @@
                     <div class="card" style="width: 15rem;">
                         <div class="card-body">
                             <h5 class="card-title mb-2 align-content-center">Decompress Files</h5>
-                            <p class="card-text">All file types supported!</p>
-                            <div class="text-center"><a href="{{ url_for('decompressfile.decompressPage') }}"" class="btn btn-primary">Decompress</a></div>
+                            <p class="card-text">Check below for file types supported!</p>
+                            <div class="text-center"><a href="{{ url_for('decompressfile.decompressPage') }}" class="btn btn-primary">Decompress</a></div>
                         </div>
                     </div>
                 </div>
             </div>
+        </div>
+        <div class="jumbotron">
+            <h1>Supported File Types:</h1>
+            <p>.txt,.pdf,.pptx,.mobi,.py,.java,.rb,,.sql.mp3,.mp4,.xsi,.exe,.jpg,.jpeg,.png</p>
         </div>
     </div>
 </div>
