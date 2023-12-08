@@ -13,21 +13,9 @@
         </form>
     </div>
     <br>
-    <!--<div class="d-flex justify-content-left">
-        {% for f in range(0,filenames|length) %}
-            {% if f == 0 %}
-                <p>Files to be compressed: </p>
-            {% endif %}
-            {% if f != (filenames|length)-1 %}
-                <p>{{filenames[f]}},</p>
-            {% else %}
-            <p>{{filenames[f]}}</p>
-            {% endif %}
-        {% endfor %}
-    </div>-->
     <div class="d-flex justify-content-left">
         {% if filenames|length > 0 %}
-            <p>Files to be compressed: 
+            <p><strong>Files to be compressed:</strong> 
                 {% for f in range(0, filenames|length) %}
                     {{ filenames[f] }}{% if f != (filenames|length) - 1 %}, {% endif %}
                 {% endfor %}
