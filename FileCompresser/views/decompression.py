@@ -1,5 +1,4 @@
 import os
-import lzma
 import zlib
 from zipfile import ZipFile
 from helpers.preProcessOps import *
@@ -31,7 +30,7 @@ def decompressPage():
             file_ext = input_file.filename[input_file.filename.rfind('.')+1:]
             if file_ext not in filetypes:
                 flash('Uploaded file is not supported!', "warning")
-                return redirect(request.url)
+#                return redirect(request.url)
             if input_file.filename and input_file.filename not in filenames:
                 data = input_file.stream.read()
                 filestreams.append(data)
@@ -39,9 +38,7 @@ def decompressPage():
 
         # Decompress the uploaded files when decompress button is clicked.
         if request.form.get("decompress"):
-            #decompressor = lzma.LZMADecompressor()
             for f in range(len(filestreams)):
-                #decompressed_data = decompressor.decompress(filestreams[f])
                 decompressed_data = zlib.decompress(filestreams[f])
                 key = fs.put(decompressed_data, filename=filenames[f])
                 keys.append(key)
