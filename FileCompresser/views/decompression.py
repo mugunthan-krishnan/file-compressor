@@ -28,8 +28,8 @@ def decompressPage():
         if request.form.get("upload"):
             input_file = request.files['file']
             file_ext = input_file.filename[input_file.filename.rfind('.')+1:]
-            if file_ext not in filetypes:
-                flash('Uploaded file is not supported!', "warning")
+#            if file_ext not in filetypes:
+#                flash('Uploaded file is not supported!', "warning")
 #                return redirect(request.url)
             if input_file.filename and input_file.filename not in filenames:
                 data = input_file.stream.read()
