@@ -29,7 +29,7 @@ def empty_tmp_folder():
 
 def preProcessOps():
     import gridfs
-    #empty_tmp_folder()
+    empty_tmp_folder()
     database = getDatabase()
     fs = gridfs.GridFS(database)
     for i in fs.find():

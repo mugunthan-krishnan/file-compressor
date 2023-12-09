@@ -1,12 +1,12 @@
 import os
 from flask import Flask
 from dotenv import load_dotenv
+
 load_dotenv()
 mongoDBURL = os.environ.get('DB_URL')
 
 def create_app(config_filename=''):
     app = Flask(__name__)
-
     with app.app_context():
         from views.home import home
         app.register_blueprint(home)
