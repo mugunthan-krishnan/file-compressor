@@ -5,7 +5,7 @@ import zlib
 import time
 from zipfile import ZipFile
 from helpers.preProcessOps import *
-from flask import Blueprint, render_template, request, send_file
+from flask import Blueprint, render_template, request, send_file, flash, redirect
 
 compress = Blueprint('compressfile', __name__)
 
@@ -16,6 +16,7 @@ inputFilesSize = {}
 keys = []
 contents=[]
 compressionSpeed = []
+filetypes=['txt','pdf','pptx','mobi','py','java','rb','sql','mp3','mp4','xsi','exe','jpg','jpeg','png']
 
 # Run pre processing steps for database.
 fs = preProcessOps()
@@ -33,6 +34,9 @@ def compressPage():
         # Upload a file and its metadata.
         if request.form.get("upload"):
             input_file = request.files['file']
+            if input_file.filename[input_file.filename.rfind('.')+1:] not in filetypes:
+                flash('Uploaded file is not supported!', "warning")
+                return redirect(request.url)
             if input_file.filename and input_file.filename not in filenames:
                 data = input_file.stream.read()
                 filestreams.append(data)
