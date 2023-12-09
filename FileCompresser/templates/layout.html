@@ -30,15 +30,13 @@
 
 <body>
     <div id="header">
+        {% include "nav.html" %}
+        {% include 'flash.html' %}
         <style>
             label {
                 text-transform: capitalize;
             }
         </style>
-        <div id="header">
-            {% include "nav.html" %}
-            {% include 'flash.html' %}
-        </div>
     </div>
     <div id="content">{% block content %}{% endblock %}</div>
     <div id="footer" class="footer text-center" style="background-color: #e3f2fd;">
