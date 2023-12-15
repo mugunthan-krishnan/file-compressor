@@ -73,7 +73,9 @@ b. **Compression:** The compress page consists of a file upload. Multiple files 
 
 6. Click on ‘Download ZIP File’. The compressed file(s) are downloaded as a zip file to the default downloads directory in your local machine. The zip file name is ‘compressed.zip’.
 
-8. Click on ‘Download Log File’. A log file is downloaded to the local machine. The log file contains the filenames and speed and compression ratio for each of the files compressed. The log file is an xlsx workbook.
+**Note**: The 'compressed.zip' file contains the compressed files. Extracting the zip file will give the compressed files. Upload these files to decompress using the Decompression page. Opening these files would lead to error, since these files are compressed which are not viewable until decompression.
+
+7. Click on ‘Download Log File’. A log file is downloaded to the local machine. The log file contains the filenames and speed and compression ratio for each of the files compressed. The log file is an xlsx workbook.
 
 c. **Decompression:** The decompress page consists of a file upload. Multiple files can be uploaded at the same time to decompress together. To successfully decompress the files, upload the files that were compressed by this application.
 
@@ -92,3 +94,5 @@ c. **Decompression:** The decompress page consists of a file upload. Multiple fi
 5. ‘Download ZIP File’ button appears on the screen. After the decompression is successful, the button appears.
 
 6. Click on ‘Download ZIP File’. The decompressed file(s) are downloaded as a zip file to the default downloads directory in your local machine. The zip file name is ‘decompressed.zip’.
+
+**Note**: The 'decompressed.zip' file contains the decompressed original files. Extracting the zip file will give the decompressed files. These files are viewable.
