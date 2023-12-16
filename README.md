@@ -45,6 +45,8 @@ The prupose of this file is to provide overview, setup instructions and backgrou
 
 The above command installs the necessary libraries to run the flask application in your local machine.
 
+Navigate to the fodler named 'FileCompresser' in the terminal and then run the below command to start the application.
+
 **python main.py**
 
 3. The flask app starts and a localhost link is provided.
