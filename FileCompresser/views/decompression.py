@@ -12,17 +12,17 @@ filenames = []
 keys = []
 contents=[]
 
-# Run pre processing steps for database.
-fs = preProcessOps()
-
 @decompress.route('/decompress', methods=['GET','POST'])
 def decompressPage():
     enabledwnld = False
     if request.method == "GET":
+        empty_tmp_folder()
         filestreams.clear()
         filenames.clear()
     
     if request.method == "POST":
+        # Run pre processing steps for database.
+        fs = preProcessOps()
         # Upload a file and its metadata.
         if request.form.get("upload"):
             input_file = request.files['file']

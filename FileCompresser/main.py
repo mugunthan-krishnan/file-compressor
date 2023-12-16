@@ -1,7 +1,9 @@
 import os
+import sys
 from flask import Flask
 from dotenv import load_dotenv
-
+CURR_DIR = os.path.dirname(os.path.abspath(__file__))
+sys.path.append(CURR_DIR)
 load_dotenv()
 mongoDBURL = os.environ.get('DB_URL')
 

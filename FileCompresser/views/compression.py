@@ -16,19 +16,19 @@ keys = []
 contents=[]
 compressionSpeed = []
 
-# Run pre processing steps for database.
-fs = preProcessOps()
-
 @compress.route('/compress', methods=['GET','POST'])
 def compressPage():
     enabledwnld = False
     # Clear filenames, filestreams fpr every run.
     if request.method == "GET":
+        empty_tmp_folder()
         filestreams.clear()
         filenames.clear()
         inputFilesSize.clear()
     
     if request.method == "POST":
+        # Run pre processing steps for database.
+        fs = preProcessOps()
         # Upload a file and its metadata.
         if request.form.get("upload"):
             input_file = request.files['file']
